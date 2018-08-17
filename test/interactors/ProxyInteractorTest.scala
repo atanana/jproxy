@@ -6,13 +6,14 @@ import io.lemonlabs.uri.Url
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{BeforeAndAfterEach, FunSuite}
 import url.UrlTransformer
+import url.UrlTransformer.{KEY_HOST, KEY_SCHEME}
 import wrappers.{FileSystemWrapper, WebWrapper}
 
 class ProxyInteractorTest extends FunSuite with BeforeAndAfterEach with MockFactory {
   val testPath = "/test/path"
   val testParams = Map(
-    ("host", List("test host")),
-    ("scheme", List("http"))
+    (KEY_HOST, List("test host")),
+    (KEY_SCHEME, List("http"))
   )
   private val testUrl = Url.parse(s"http://test.com$testPath")
   val testContent = "test content"
