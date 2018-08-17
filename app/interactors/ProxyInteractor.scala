@@ -8,7 +8,12 @@ import url.UrlTransformer
 import wrappers.{FileSystemWrapper, WebWrapper}
 
 @Singleton
-class ProxyInteractor @Inject()(urlTransformer: UrlTransformer, fsWrapper: FileSystemWrapper, webWrapper: WebWrapper) {
+class ProxyInteractor @Inject()(
+                                 urlTransformer: UrlTransformer,
+                                 fsWrapper: FileSystemWrapper,
+                                 webWrapper: WebWrapper,
+                                 processor: ProcessNewResult
+                               ) {
   def processRequest(path: String, params: Map[String, Seq[String]]): String = {
     val url = urlTransformer.transformToExternalUrl(path, params)
     val cacheFile = s"store${url.path.toString()}.json"
@@ -29,7 +34,6 @@ class ProxyInteractor @Inject()(urlTransformer: UrlTransformer, fsWrapper: FileS
 
   private def getResultFromNet(url: Url, cacheFile: String) = {
     val rawResult = webWrapper.readUrl(new URL(url.toString()))
-    fsWrapper.writeFile(cacheFile, rawResult)
-    rawResult
+    processor.process(cacheFile, rawResult)
   }
 }

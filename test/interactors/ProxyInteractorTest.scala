@@ -17,51 +17,42 @@ class ProxyInteractorTest extends FunSuite with BeforeAndAfterEach with MockFact
   )
   private val testUrl = Url.parse(s"http://test.com$testPath")
   val testContent = "test content"
+  val testContent2 = "test content2"
 
   var transformer: UrlTransformer = _
   var fsWrapper: FileSystemWrapper = _
   var webWrapper: WebWrapper = _
+  var processor: ProcessNewResult = _
   var interactor: ProxyInteractor = _
 
   override protected def beforeEach(): Unit = {
     transformer = stub[UrlTransformer]
-    fsWrapper = mock[FileSystemWrapper]
+    fsWrapper = stub[FileSystemWrapper]
     webWrapper = stub[WebWrapper]
-    interactor = new ProxyInteractor(transformer, fsWrapper, webWrapper)
+    processor = stub[ProcessNewResult]
+    interactor = new ProxyInteractor(transformer, fsWrapper, webWrapper, processor)
   }
 
   test("it should get result from cache") {
     prepareTransformer
     setFileExists(true)
-    fsWrapper.readFile _ expects s"store$testPath.json" returns testContent
-    checkResult
+    fsWrapper.readFile _ when s"store$testPath.json" returns testContent
+    assert(interactor.processRequest(testPath, testParams) == testContent)
   }
 
   test("it should get result from net") {
     prepareTransformer
     setFileExists(false)
     webWrapper.readUrl _ when new URL(testUrl.toString()) returns testContent
-    fsWrapper.writeFile _ expects(*, *)
-    checkResult
-  }
-
-  test("it should save result to cache") {
-    prepareTransformer
-    setFileExists(false)
-    webWrapper.readUrl _ when new URL(testUrl.toString()) returns testContent
-    fsWrapper.writeFile _ expects(s"store$testPath.json", testContent)
-    checkResult
+    processor.process _ when(s"store$testPath.json", testContent) returns testContent2
+    assert(interactor.processRequest(testPath, testParams) == testContent2)
   }
 
   private def prepareTransformer = {
     transformer.transformToExternalUrl _ when(testPath, testParams) returns testUrl
   }
 
-  private def checkResult = {
-    assert(interactor.processRequest(testPath, testParams) == testContent)
-  }
-
   private def setFileExists(isExists: Boolean): Any = {
-    fsWrapper.isFileExists _ expects s"store$testPath.json" returns isExists
+    fsWrapper.isFileExists _ when s"store$testPath.json" returns isExists
   }
 }
