@@ -10,11 +10,13 @@ import wrappers.{FileSystemWrapper, WebWrapper}
 class ProxyInteractor @Inject()(urlTransformer: UrlTransformer, fsWrapper: FileSystemWrapper, webWrapper: WebWrapper) {
   def processRequest(path: String, params: Map[String, Seq[String]]): String = {
     val url = urlTransformer.transformToExternalUrl(path, params)
-    val cachedPath = url.path.toString()
-    if (fsWrapper.isFileExists(cachedPath)) {
-      fsWrapper.readFile(cachedPath)
+    val cacheFile = s"store/${url.path.toString()}.json"
+    if (fsWrapper.isFileExists(cacheFile)) {
+      fsWrapper.readFile(cacheFile)
     } else {
-      webWrapper.readUrl(new URL(url.toString()))
+      val result = webWrapper.readUrl(new URL(url.toString()))
+      fsWrapper.writeFile(cacheFile, result)
+      result
     }
   }
 }
