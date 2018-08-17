@@ -7,8 +7,12 @@ class UrlTransformerTest extends FunSuite {
 
   test("testTransformToExternalUrl") {
     val transformer = UrlTransformer()
-    val result = transformer.transformToExternalUrl("api/en/content/v5/mobile/config?host=www.nflgamepass.com")
-    assert(Url(host = "www.nflgamepass.com", path = "api/en/content/v5/mobile/config") == result)
+    val params = Map(
+      ("host", List("www.nflgamepass.com")),
+      ("scheme", List("https"))
+    )
+    val result = transformer.transformToExternalUrl("/api/en/content/v5/mobile/config", params)
+    assert(Url.parse("https://www.nflgamepass.com/api/en/content/v5/mobile/config") == result)
   }
 
 }
