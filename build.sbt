@@ -9,6 +9,7 @@ scalaVersion := "2.12.6"
 
 libraryDependencies += guice
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test
+libraryDependencies += "io.lemonlabs" %% "scala-uri" % "1.1.5"
 
 // Adds additional packages into Twirl
 //TwirlKeys.templateImports += "com.example.controllers._"
