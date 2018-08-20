@@ -9,7 +9,7 @@ import play.api.mvc._
 class ProxyController @Inject()(cc: ControllerComponents, proxyInteractor: ProxyInteractor) extends AbstractController(cc) {
   def index(path: String) = Action { implicit request: Request[AnyContent] =>
     if (request.queryString.nonEmpty) {
-      Logger.debug(s"Handle ${request.path} $request.queryString")
+      Logger.debug(s"Handle ${request.path} ${request.queryString}")
       Ok(proxyInteractor.processRequest(request.path, request.queryString))
     } else {
       Ok
