@@ -4,6 +4,7 @@
 # ~~~~
 
 # An example controller showing a sample home page
+GET        /                    controllers.ProxyController.default()
 GET        /*path               controllers.ProxyController.index(path)
 
 # Map static resources from the /public folder to the /assets URL path
