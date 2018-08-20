@@ -22,7 +22,7 @@ class UrlTransformerTest extends FunSuite with BeforeAndAfterEach {
   }
 
   test("testTransformToInternalUrl") {
-    val result = transformer.transformToInternalUrl("https://www.nflgamepass.com/api/en/content/v5/mobile/teams/{u.preferredTeam}/details")
-    assert(result == "/api/en/content/v5/mobile/teams/{u.preferredTeam}/details?host=www.nflgamepass.com&scheme=https")
+    val result = transformer.transformToInternalUrl("https://www.nflgamepass.com/api/en/content/v5/mobile/teams/{u.preferredTeam}/details", "test.com")
+    assert(result == "http://test.com/api/en/content/v5/mobile/teams/{u.preferredTeam}/details?host=www.nflgamepass.com&scheme=https")
   }
 }

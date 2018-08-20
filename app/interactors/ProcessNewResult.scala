@@ -25,7 +25,7 @@ class ProcessNewResult @Inject()(
     if (isIgnored(url)) {
       url
     } else {
-      transformer.transformToInternalUrl(url)
+      transformer.transformToInternalUrl(url, configWrapper.host)
     }
   }
 
