@@ -2,12 +2,14 @@ package controllers
 
 import interactors.ProxyInteractor
 import javax.inject.{Inject, Singleton}
+import play.api.Logger
 import play.api.mvc._
 
 @Singleton
 class ProxyController @Inject()(cc: ControllerComponents, proxyInteractor: ProxyInteractor) extends AbstractController(cc) {
   def index(path: String) = Action { implicit request: Request[AnyContent] =>
     if (request.queryString.nonEmpty) {
+      Logger.debug(s"Handle ${request.path} $request.queryString")
       Ok(proxyInteractor.processRequest(request.path, request.queryString))
     } else {
       Ok
