@@ -18,11 +18,14 @@ class UrlTransformer {
     )
   }
 
-  def transformToInternalUrl(urlStr: String, host: String): String = {
+  def transformToInternalUrl(urlStr: String, host: String, port: Int): String = {
     val url = AbsoluteUrl.parse(urlStr)
-    val resultUrl = url.addParam(KEY_HOST, url.host.toString())
+    url.addParam(KEY_HOST, url.host.toString())
       .addParam(KEY_SCHEME, url.scheme)
-    s"http://$host${resultUrl.path.toStringRaw}${resultUrl.query.toStringRaw}"
+      .withHost(host)
+      .withPort(port)
+      .withScheme("http")
+      .toStringRaw
   }
 }
 

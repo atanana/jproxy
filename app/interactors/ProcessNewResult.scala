@@ -10,7 +10,7 @@ class ProcessNewResult @Inject()(
                                   configWrapper: ConfigWrapper,
                                   transformer: UrlTransformer
                                 ) {
-  private val urlRegexp = """(https?://[\w\d\./{}\[\]-_&?#]*)""".r
+  private val urlRegexp = """(https?://[\w\d\./{}\[\]\-_&?#]*)""".r
 
   def process(cacheFile: String, result: String): String = {
     val processedResult = replaceUrls(result)
@@ -25,7 +25,7 @@ class ProcessNewResult @Inject()(
     if (isIgnored(url)) {
       url
     } else {
-      transformer.transformToInternalUrl(url, configWrapper.host)
+      transformer.transformToInternalUrl(url, configWrapper.host, configWrapper.port)
     }
   }
 

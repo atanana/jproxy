@@ -9,4 +9,6 @@ class ConfigWrapper @Inject()(config: Configuration) {
   }
 
   def host: String = config.get[String]("host")
+
+  def port: Int = config.get[Int]("port")
 }

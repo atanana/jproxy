@@ -13,11 +13,13 @@ class ProcessNewResultTest extends FunSuite with MockFactory with OneInstancePer
 
   private val cacheFile = "cache"
   private val testHost = "test.com"
+  private val testPort = 9000
   private val testUrl = "https://www.nflgamepass.com/api/user/api/users/v1/profile/me"
   private val testUrlProcessed = "http://test.com/api/user/api/users/v1/profile/me?host=www.nflgamepass.com&scheme=https"
 
   configWrapper.host _ when() returns testHost
-  transformer.transformToInternalUrl _ when(testUrl, testHost) returns testUrlProcessed
+  configWrapper.port _ when() returns testPort
+  transformer.transformToInternalUrl _ when(testUrl, testHost, testPort) returns testUrlProcessed
 
   test("should replace urls") {
     stubIgnoredPrefixes(List.empty)
