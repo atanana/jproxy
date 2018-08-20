@@ -22,7 +22,7 @@ class UrlTransformer {
     val url = AbsoluteUrl.parse(urlStr)
     val resultUrl = url.addParam(KEY_HOST, url.host.toString())
       .addParam(KEY_SCHEME, url.scheme)
-    resultUrl.path + resultUrl.query.toString()
+    resultUrl.path.toStringRaw + resultUrl.query.toStringRaw
   }
 }
 

@@ -18,11 +18,11 @@ class UrlTransformerTest extends FunSuite with BeforeAndAfterEach {
       (KEY_SCHEME, List("https"))
     )
     val result = transformer.transformToExternalUrl("/api/en/content/v5/mobile/config", params)
-    assert(Url.parse("https://www.nflgamepass.com/api/en/content/v5/mobile/config") == result)
+    assert(result == Url.parse("https://www.nflgamepass.com/api/en/content/v5/mobile/config"))
   }
 
   test("testTransformToInternalUrl") {
-    val result = transformer.transformToInternalUrl("https://www.nflgamepass.com/api/en/content/v5/mobile/config")
-    assert("/api/en/content/v5/mobile/config?host=www.nflgamepass.com&scheme=https" == result)
+    val result = transformer.transformToInternalUrl("https://www.nflgamepass.com/api/en/content/v5/mobile/teams/{u.preferredTeam}/details")
+    assert(result == "/api/en/content/v5/mobile/teams/{u.preferredTeam}/details?host=www.nflgamepass.com&scheme=https")
   }
 }
