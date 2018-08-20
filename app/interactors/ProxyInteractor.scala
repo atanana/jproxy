@@ -1,7 +1,5 @@
 package interactors
 
-import java.net.URL
-
 import io.lemonlabs.uri.Url
 import javax.inject.{Inject, Singleton}
 import url.UrlTransformer
@@ -14,13 +12,13 @@ class ProxyInteractor @Inject()(
                                  webWrapper: WebWrapper,
                                  processor: ProcessNewResult
                                ) {
-  def processRequest(path: String, params: Map[String, Seq[String]]): String = {
+  def processRequest(path: String, params: Map[String, Seq[String]], auth: Option[String]): String = {
     val url = urlTransformer.transformToExternalUrl(path, params)
     val cacheFile = s"store${url.path.toString()}.json"
     if (isInCache(cacheFile)) {
       getResultFromCache(cacheFile)
     } else {
-      getResultFromNet(url, cacheFile)
+      getResultFromNet(url, cacheFile, auth)
     }
   }
 
@@ -32,8 +30,8 @@ class ProxyInteractor @Inject()(
     fsWrapper.readFile(cacheFile)
   }
 
-  private def getResultFromNet(url: Url, cacheFile: String) = {
-    val rawResult = webWrapper.readUrl(new URL(url.toString()))
+  private def getResultFromNet(url: Url, cacheFile: String, auth: Option[String]) = {
+    val rawResult = webWrapper.readUrl(url.toString(), auth)
     processor.process(cacheFile, rawResult)
   }
 }

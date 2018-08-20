@@ -1,12 +1,28 @@
 package wrappers
 
-import java.net.URL
+import javax.inject.{Inject, Singleton}
+import play.api.libs.ws.WSClient
+import wrappers.WebWrapper.HEADER_AUTHORIZATION
 
-import javax.inject.Singleton
-
-import scala.io.Source
+import scala.concurrent.Await
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
 
 @Singleton
-class WebWrapper {
-  def readUrl(url: URL): String = Source.fromURL(url).mkString
+class WebWrapper @Inject()(ws: WSClient) {
+  def readUrl(url: String, auth: Option[String]): String = {
+    val future = ws.url(url)
+      .withHttpHeaders(headers(auth): _*)
+      .get()
+      .map(response => response.body)
+    Await.result(future, 30.seconds)
+  }
+
+  private def headers(auth: Option[String]) = {
+    auth.map(header => (HEADER_AUTHORIZATION, header)).toList
+  }
+}
+
+object WebWrapper {
+  val HEADER_AUTHORIZATION = "Authorization"
 }
