@@ -18,3 +18,10 @@ libraryDependencies += "org.scalamock" %% "scalamock" % "4.1.0" % Test
 
 // Adds additional packages into conf/routes
 // play.sbt.routes.RoutesKeys.routesImport += "com.example.binders._"
+
+assemblyMergeStrategy in assembly := {
+  case PathList(ps@_*) if ps.last == "reference-overrides.conf" => MergeStrategy.concat
+  case x =>
+    val oldStrategy = (assemblyMergeStrategy in assembly).value
+    oldStrategy(x)
+}
