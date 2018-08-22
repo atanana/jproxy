@@ -1,7 +1,6 @@
 package interactors
 
-import java.net.URL
-
+import akka.japi.Option.Some
 import io.lemonlabs.uri.Url
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{BeforeAndAfterEach, FunSuite}
@@ -18,6 +17,7 @@ class ProxyInteractorTest extends FunSuite with BeforeAndAfterEach with MockFact
   private val testUrl = Url.parse(s"http://test.com$testPath")
   val testContent = "test content"
   val testContent2 = "test content2"
+  private val testAuth: Option[String] = Some("test")
 
   var transformer: UrlTransformer = _
   var fsWrapper: FileSystemWrapper = _
@@ -37,15 +37,15 @@ class ProxyInteractorTest extends FunSuite with BeforeAndAfterEach with MockFact
     prepareTransformer
     setFileExists(true)
     fsWrapper.readFile _ when s"store$testPath.json" returns testContent
-    assert(interactor.processRequest(testPath, testParams) == testContent)
+    assert(interactor.processRequest(testPath, testParams, testAuth) == testContent)
   }
 
   test("it should get result from net") {
     prepareTransformer
     setFileExists(false)
-    webWrapper.readUrl _ when new URL(testUrl.toString()) returns testContent
+    webWrapper.readUrl _ when(testUrl.toString(), testAuth) returns testContent
     processor.process _ when(s"store$testPath.json", testContent) returns testContent2
-    assert(interactor.processRequest(testPath, testParams) == testContent2)
+    assert(interactor.processRequest(testPath, testParams, testAuth) == testContent2)
   }
 
   private def prepareTransformer = {
