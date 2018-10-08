@@ -2,8 +2,11 @@ package interactors
 
 import io.lemonlabs.uri.Url
 import javax.inject.{Inject, Singleton}
+import play.api.libs.json.Json
 import url.UrlTransformer
 import wrappers.{FileSystemWrapper, WebWrapper}
+
+import scala.util.Try
 
 @Singleton
 class ProxyInteractor @Inject()(
@@ -32,6 +35,12 @@ class ProxyInteractor @Inject()(
 
   private def getResultFromNet(url: Url, cacheFile: String, auth: Option[String]) = {
     val rawResult = webWrapper.readUrl(url.toString(), auth)
-    processor.process(cacheFile, rawResult)
+    processor.process(cacheFile, prettify(rawResult))
   }
+
+  private def prettify(contents: String): String =
+    Try {
+      val json = Json.parse(contents)
+      Json.prettyPrint(json)
+    }.getOrElse(contents)
 }

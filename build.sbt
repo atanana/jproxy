@@ -1,5 +1,5 @@
 name := """jproxy"""
-organization := "com.example"
+organization := "com.atanana"
 
 version := "1.0-SNAPSHOT"
 
